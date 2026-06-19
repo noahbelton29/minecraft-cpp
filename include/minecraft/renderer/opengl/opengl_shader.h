@@ -35,12 +35,17 @@ namespace Minecraft {
      * @return The shader program ID.
      */
     [[nodiscard]] GLuint getProgram() const;
+    /**
+     * @brief Gets the backend's native handle for this shader.
+     * @return The OpenGL program ID.
+     */
+    [[nodiscard]] unsigned int getNativeHandle() const override;
 
   private:
     GLuint program_ = 0;
     /**
      * @brief Compiles a single shader stage from source.
-     * @param type The shader stage type (vertex, fragment, etc).
+     * @param type The shader stage type.
      * @param source GLSL source code for the shader.
      * @return The compiled shader ID.
      */

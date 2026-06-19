@@ -1,11 +1,12 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <glm/mat4x4.hpp>
+
 #include <memory>
 
+#include <glm/mat4x4.hpp>
 #include "minecraft/renderer/i_renderer.h"
-#include "opengl_shader.h"
+#include "minecraft/renderer/i_shader.h"
 
 namespace Minecraft {
   /**
@@ -48,10 +49,10 @@ namespace Minecraft {
     setClearColor(float red, float green, float blue, float alpha) override;
 
   private:
-    float                         clearColor_[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLuint                        vao_           = 0;
-    GLuint                        vbo_           = 0;
-    std::unique_ptr<OpenGLShader> shader_;
-    glm::mat4                     projection_;
+    float                    clearColor_[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    GLuint                   vao_           = 0;
+    GLuint                   vbo_           = 0;
+    std::unique_ptr<IShader> shader_;
+    glm::mat4                projection_{};
   };
 } // namespace Minecraft

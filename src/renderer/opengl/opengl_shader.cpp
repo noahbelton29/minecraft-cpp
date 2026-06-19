@@ -64,6 +64,10 @@ GLuint Minecraft::OpenGLShader::getProgram() const {
   return program_;
 }
 
+unsigned int Minecraft::OpenGLShader::getNativeHandle() const {
+  return program_;
+}
+
 void Minecraft::OpenGLShader::setUniform(const std::string &name,
                                          const float        value) {
   if (const GLint location = glGetUniformLocation(program_, name.c_str());

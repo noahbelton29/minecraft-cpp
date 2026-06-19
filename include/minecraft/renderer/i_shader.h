@@ -19,5 +19,10 @@ namespace Minecraft {
      * @param value Value to give it.
      */
     virtual void setUniform(const std::string &, float) = 0;
+    /**
+     * @brief Gets the backend's native handle for this shader.
+     * @return The native shader ID (e.g. the OpenGL program ID).
+     */
+    [[nodiscard]] virtual unsigned int getNativeHandle() const = 0;
   };
 } // namespace Minecraft

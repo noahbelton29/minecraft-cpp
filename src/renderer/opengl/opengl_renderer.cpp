@@ -4,6 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
+#include "minecraft/renderer/shader_factory.h"
+#include "minecraft/renderer/shader_paths.h"
 #include "minecraft/util/file_utils.h"
 
 bool Minecraft::OpenGLRenderer::init() {
@@ -69,12 +71,12 @@ bool Minecraft::OpenGLRenderer::init() {
   glEnableVertexAttribArray(1);
   glBindVertexArray(0);
 
-  std::string vertexSrc =
-      FileUtils::readFileToString("resources/shaders/triangle.vsh");
-  std::string fragmentSrc =
-      FileUtils::readFileToString("resources/shaders/triangle.fsh");
+  const std::string vertexSrc = FileUtils::readFileToString(
+      ShaderPaths::getVertexShaderPath(RendererAPI::OpenGL, "triangle"));
+  const std::string fragmentSrc = FileUtils::readFileToString(
+      ShaderPaths::getFragmentShaderPath(RendererAPI::OpenGL, "triangle"));
 
-  shader_ = std::make_unique<OpenGLShader>(vertexSrc, fragmentSrc);
+  shader_ = ShaderFactory::create(RendererAPI::OpenGL, vertexSrc, fragmentSrc);
   return true;
 }
 
@@ -88,18 +90,18 @@ void Minecraft::OpenGLRenderer::render() {
 
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
-  const float aspect =
-      viewport[3] != 0
-          ? static_cast<float>(viewport[2]) / static_cast<float>(viewport[3])
-          : 1.0f;
+  const float aspect = viewport[3] != 0 ? static_cast<float>(viewport[2]) /
+                                              static_cast<float>(viewport[3])
+                                        : 1.0f;
 
-  projection_ = aspect >= 1.0f
-                    ? glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f)
-                    : glm::ortho(-1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect,
-                                 -1.0f, 1.0f);
+  projection_ =
+      aspect >= 1.0f
+          ? glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f)
+          : glm::ortho(-1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1.0f, 1.0f);
 
   shader_->bind();
-  int location = glGetUniformLocation(shader_->getProgram(), "uProjection");
+  const int location =
+      glGetUniformLocation(shader_->getNativeHandle(), "uProjection");
   glUniformMatrix4fv(location, 1, GL_FALSE, &projection_[0][0]);
 
   glBindVertexArray(vao_);
