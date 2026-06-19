@@ -1,9 +1,13 @@
 #include "minecraft/renderer/opengl/opengl_renderer.h"
+
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
+#include "minecraft/renderer/opengl/opengl_index_buffer.h"
+#include "minecraft/renderer/opengl/opengl_vertex_array.h"
+#include "minecraft/renderer/opengl/opengl_vertex_buffer.h"
 #include "minecraft/renderer/shader_factory.h"
 #include "minecraft/util/file_utils.h"
 #include "minecraft/util/shader_paths.h"
@@ -24,52 +28,40 @@ bool Minecraft::OpenGLRenderer::init() {
 
   glEnable(GL_DEPTH_TEST);
 
-  constexpr float vertices[] = {-0.5f,
-                                -0.5f,
-                                0.0f,
-                                1.0f,
-                                0.0f,
-                                0.0f,
-                                0.5f,
-                                -0.5f,
-                                0.0f,
-                                0.0f,
-                                1.0f,
-                                0.0f,
-                                0.0f,
-                                0.5f,
-                                0.0f,
-                                0.0f,
-                                0.0f,
-                                1.0f};
+  constexpr float vertices[] = {
+      -0.5f,
+      -0.5f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      0.5f,
+      -0.5f,
+      0.0f,
+      0.0f,
+      1.0f,
+      0.0f,
+      0.0f,
+      0.5f,
+      0.0f,
+      0.0f,
+      0.0f,
+      1.0f,
+  };
 
-  // VAO
-  glGenVertexArrays(1, &vao_);
-  glBindVertexArray(vao_);
+  constexpr uint32_t indices[] = {0, 1, 2};
 
-  // VBO
-  glGenBuffers(1, &vbo_);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  const auto vb =
+      std::make_shared<OpenGLVertexBuffer>(vertices, sizeof(vertices));
+  const auto ib = std::make_shared<OpenGLIndexBuffer>(indices, 3);
 
-  // position (location = 0)
-  glVertexAttribPointer(0,
-                        3,
-                        GL_FLOAT,
-                        GL_FALSE,
-                        6 * sizeof(float),
-                        static_cast<void *>(nullptr));
-  glEnableVertexAttribArray(0);
-
-  // color (location = 1)
-  glVertexAttribPointer(1,
-                        3,
-                        GL_FLOAT,
-                        GL_FALSE,
-                        6 * sizeof(float),
-                        reinterpret_cast<void *>(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
-  glBindVertexArray(0);
+  vertexArray_ = std::make_unique<OpenGLVertexArray>();
+  vertexArray_->addVertexBuffer(vb,
+                                {
+                                    {ShaderDataType::Float3}, // position
+                                    {ShaderDataType::Float3}, // color
+                                });
+  vertexArray_->setIndexBuffer(ib);
 
   const std::string vertexSrc = FileUtils::readFileToString(
       ShaderPaths::getVertexShaderPath(RendererAPI::OpenGL, "triangle"));
@@ -79,7 +71,6 @@ bool Minecraft::OpenGLRenderer::init() {
   shader_ = ShaderFactory::create(RendererAPI::OpenGL, vertexSrc, fragmentSrc);
   return true;
 }
-
 
 void Minecraft::OpenGLRenderer::shutdown() {
 }
@@ -104,11 +95,13 @@ void Minecraft::OpenGLRenderer::render() {
       glGetUniformLocation(shader_->getNativeHandle(), "uProjection");
   glUniformMatrix4fv(location, 1, GL_FALSE, &projection_[0][0]);
 
-  glBindVertexArray(vao_);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
-  glBindVertexArray(0);
+  vertexArray_->bind();
+  glDrawElements(GL_TRIANGLES,
+                 static_cast<GLsizei>(vertexArray_->indexBuffer()->count()),
+                 GL_UNSIGNED_INT,
+                 nullptr);
+  vertexArray_->unbind();
 }
-
 
 void Minecraft::OpenGLRenderer::clear() {
   glClearColor(clearColor_[0], clearColor_[1], clearColor_[2], clearColor_[3]);
