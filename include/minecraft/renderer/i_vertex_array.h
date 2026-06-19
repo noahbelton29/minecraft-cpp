@@ -9,6 +9,7 @@
 #include "i_vertex_buffer.h"
 
 namespace Minecraft {
+
   /**
    * @brief Primitive types a vertex attribute can carry.
    */

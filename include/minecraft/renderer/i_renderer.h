@@ -1,11 +1,11 @@
 #pragma once
 
+#include <memory>
+#include "i_camera.h"
+
 namespace Minecraft {
   /**
    * @brief Abstract interface for all renderer implementations.
-   *
-   * This interface defines the contract that all renderer backends must
-   * implement.
    */
   class IRenderer {
   public:
@@ -30,7 +30,6 @@ namespace Minecraft {
 
     /**
      * @brief Clears the screen buffers.
-     * Uses the current clear color set by setClearColor().
      */
     virtual void clear() = 0;
 
@@ -43,5 +42,11 @@ namespace Minecraft {
      */
     virtual void
     setClearColor(float red, float green, float blue, float alpha) = 0;
+
+    /**
+     * @brief Replaces the active camera.
+     * @param camera The camera to render from.
+     */
+    virtual void setCamera(std::shared_ptr<ICamera> camera) = 0;
   };
 } // namespace Minecraft

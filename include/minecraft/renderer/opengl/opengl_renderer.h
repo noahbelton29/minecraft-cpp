@@ -1,9 +1,9 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <glm/mat4x4.hpp>
 #include <memory>
 
+#include "minecraft/renderer/i_camera.h"
 #include "minecraft/renderer/i_renderer.h"
 #include "minecraft/renderer/i_shader.h"
 #include "minecraft/renderer/i_vertex_array.h"
@@ -48,11 +48,17 @@ namespace Minecraft {
     void
     setClearColor(float red, float green, float blue, float alpha) override;
 
+    /**
+     * @brief Replaces the active camera.
+     * @param camera The camera to render from.
+     */
+    void setCamera(std::shared_ptr<ICamera> camera) override;
+
   private:
     float clearColor_[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
     std::unique_ptr<IVertexArray> vertexArray_;
     std::unique_ptr<IShader>      shader_;
-    glm::mat4                     projection_{};
+    std::shared_ptr<ICamera>      camera_;
   };
 } // namespace Minecraft

@@ -20,21 +20,32 @@ namespace Minecraft {
                  const std::string &fragmentSource);
 
     ~OpenGLShader() override;
+
     /**
      * @brief Activates this shader for drawing.
      */
     void bind() override;
+
     /**
-     * @brief Sets a float value on the shader.
+     * @brief Sets a float uniform on the shader.
      * @param name Name of the uniform in the shader code.
-     * @param value Value to give it.
+     * @param value Value to set.
      */
-    void setUniform(const std::string &, float) override;
+    void setUniform(const std::string &name, float value) override;
+
+    /**
+     * @brief Sets a mat4 uniform on the shader.
+     * @param name Name of the uniform in the shader code.
+     * @param value Value to set.
+     */
+    void setUniform(const std::string &name, const glm::mat4 &value) override;
+
     /**
      * @brief Gets the OpenGL program ID for this shader.
      * @return The shader program ID.
      */
     [[nodiscard]] GLuint getProgram() const;
+
     /**
      * @brief Gets the backend's native handle for this shader.
      * @return The OpenGL program ID.
@@ -43,6 +54,7 @@ namespace Minecraft {
 
   private:
     GLuint program_ = 0;
+
     /**
      * @brief Compiles a single shader stage from source.
      * @param type The shader stage type.

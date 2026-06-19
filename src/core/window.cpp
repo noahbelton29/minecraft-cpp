@@ -18,7 +18,7 @@ Minecraft::Window::~Window() {
 
 void Minecraft::Window::makeContextCurrent() const {
   glfwMakeContextCurrent(windowHandle_);
-  glfwSwapInterval(1);
+  glfwSwapInterval(0);
 }
 
 bool Minecraft::Window::init() {

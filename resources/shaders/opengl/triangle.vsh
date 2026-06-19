@@ -5,10 +5,10 @@ layout(location = 1) in vec3 inVertexColor;
 
 out vec3 fragColor;
 
-uniform mat4 uProjection;
+uniform mat4 uViewProjection;
 
 void main()
 {
     fragColor = inVertexColor;
-    gl_Position = uProjection * vec4(inPosition, 1.0);
+    gl_Position = uViewProjection * vec4(inPosition, 1.0);
 }

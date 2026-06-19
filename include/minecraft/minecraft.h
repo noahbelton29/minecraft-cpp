@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-
+#include <string>
 
 #include "core/window.h"
 #include "renderer/i_renderer.h"
@@ -11,6 +11,8 @@
 #define WINDOW_HEIGHT 600
 
 namespace Minecraft {
+  class CameraController;
+
   /**
    * @brief The main Minecraft game application.
    */
@@ -21,7 +23,7 @@ namespace Minecraft {
      * @param width Window width in pixels.
      * @param height Window height in pixels.
      * @param title Window title.
-     * @param api The Rendering API used to display graphics.
+     * @param api The rendering API to use.
      */
     explicit Minecraft(int         width  = WINDOW_WIDTH,
                        int         height = WINDOW_HEIGHT,
@@ -36,7 +38,8 @@ namespace Minecraft {
     void run();
 
   private:
-    void update(); // Updates game logic each frame
+    void update(CameraController &controller,
+                float             dt); // updates game logic each frame
 
     Window                     window_;
     std::unique_ptr<IRenderer> renderer_;

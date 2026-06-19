@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/mat4x4.hpp>
 #include <string>
 
 namespace Minecraft {
@@ -9,16 +10,27 @@ namespace Minecraft {
   class IShader {
   public:
     virtual ~IShader() = default;
+
     /**
      * @brief Activates this shader for drawing.
      */
     virtual void bind() = 0;
+
     /**
-     * @brief Sets a float value on the shader.
+     * @brief Sets a float uniform on the shader.
      * @param name Name of the uniform in the shader code.
-     * @param value Value to give it.
+     * @param value Value to set.
      */
-    virtual void setUniform(const std::string &, float) = 0;
+    virtual void setUniform(const std::string &name, float value) = 0;
+
+    /**
+     * @brief Sets a mat4 uniform on the shader.
+     * @param name Name of the uniform in the shader code.
+     * @param value Value to set.
+     */
+    virtual void setUniform(const std::string &name,
+                            const glm::mat4   &value) = 0;
+
     /**
      * @brief Gets the backend's native handle for this shader.
      * @return The native shader ID (e.g. the OpenGL program ID).

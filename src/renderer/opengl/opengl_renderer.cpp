@@ -1,8 +1,6 @@
 #include "minecraft/renderer/opengl/opengl_renderer.h"
 
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
 #include "minecraft/renderer/opengl/opengl_index_buffer.h"
@@ -76,24 +74,13 @@ void Minecraft::OpenGLRenderer::shutdown() {
 }
 
 void Minecraft::OpenGLRenderer::render() {
-  setClearColor(0.1f, 0.9f, 1.0f, 1.0f);
+  setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   clear();
 
-  GLint viewport[4];
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  const float aspect = viewport[3] != 0 ? static_cast<float>(viewport[2]) /
-                                              static_cast<float>(viewport[3])
-                                        : 1.0f;
-
-  projection_ =
-      aspect >= 1.0f
-          ? glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f)
-          : glm::ortho(-1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1.0f, 1.0f);
-
   shader_->bind();
-  const int location =
-      glGetUniformLocation(shader_->getNativeHandle(), "uProjection");
-  glUniformMatrix4fv(location, 1, GL_FALSE, &projection_[0][0]);
+
+  if (camera_)
+    shader_->setUniform("uViewProjection", camera_->viewProjectionMatrix());
 
   vertexArray_->bind();
   glDrawElements(GL_TRIANGLES,
@@ -116,4 +103,8 @@ void Minecraft::OpenGLRenderer::setClearColor(const float red,
   clearColor_[1] = green;
   clearColor_[2] = blue;
   clearColor_[3] = alpha;
+}
+
+void Minecraft::OpenGLRenderer::setCamera(std::shared_ptr<ICamera> camera) {
+  camera_ = std::move(camera);
 }
