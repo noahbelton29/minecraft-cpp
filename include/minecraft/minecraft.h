@@ -1,6 +1,11 @@
 #pragma once
 
+#include <memory>
+
+
 #include "core/window.h"
+#include "renderer/i_renderer.h"
+#include "renderer/renderer_api.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -16,10 +21,12 @@ namespace Minecraft {
      * @param width Window width in pixels.
      * @param height Window height in pixels.
      * @param title Window title.
+     * @param api The Rendering API used to display graphics.
      */
     explicit Minecraft(int         width  = WINDOW_WIDTH,
                        int         height = WINDOW_HEIGHT,
-                       std::string title  = "Minecraft");
+                       std::string title  = "Minecraft",
+                       RendererAPI api    = RendererAPI::OpenGL);
     ~Minecraft();
 
     /**
@@ -30,9 +37,9 @@ namespace Minecraft {
 
   private:
     void update(); // Updates game logic each frame
-    void render(); // Draws everything each frame
 
-    Window window_;
-    bool   running_ = true;
+    Window                     window_;
+    std::unique_ptr<IRenderer> renderer_;
+    bool                       running_ = true;
   };
 } // namespace Minecraft

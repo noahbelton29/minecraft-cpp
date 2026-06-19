@@ -27,10 +27,21 @@ namespace Minecraft {
     bool init();
 
     /**
-     * @brief Handles window events and shows the rendered frame.
+     * @brief Makes the window's rendering context current on this thread.
+     */
+    void makeContextCurrent() const;
+
+    /**
+     * @brief Handles window events.
      * Call this once per frame.
      */
-    void endFrame() const;
+    void pollEvents() const;
+
+    /*
+     * @brief Shows the window to the screen.
+     * Call this once per frame.
+     */
+    void swapBuffers() const;
 
     /**
      * @brief Checks if the user wants to close the window.

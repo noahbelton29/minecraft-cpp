@@ -1,6 +1,4 @@
 #include "minecraft/core/window.h"
-
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include <utility>
 
@@ -18,18 +16,17 @@ Minecraft::Window::~Window() {
   glfwTerminate();
 }
 
+void Minecraft::Window::makeContextCurrent() const {
+  glfwMakeContextCurrent(windowHandle_);
+}
+
 bool Minecraft::Window::init() {
   if (!glfwInit()) {
     std::cerr << "Failed to initialise GLFW\n";
     return false;
   }
 
-  // set opengl version
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-  // create window
+  // Create window
   windowHandle_ =
       glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
 
@@ -39,26 +36,20 @@ bool Minecraft::Window::init() {
     return false;
   }
 
-  glfwMakeContextCurrent(windowHandle_);
-
-  // initialise glad
-  if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-    std::cerr << "Failed to initialise GLAD\n";
-    return false;
-  }
-
-  std::cout << "OpenGL version: " << glGetString(GL_VERSION) << "\n";
-
-  glViewport(0, 0, width_, height_);
-  glEnable(GL_DEPTH_TEST);
   return true;
 }
 
-void Minecraft::Window::endFrame() const {
+void Minecraft::Window::pollEvents() const {
   if (!windowHandle_)
     return;
 
   glfwPollEvents();
+}
+
+void Minecraft::Window::swapBuffers() const {
+  if (!windowHandle_)
+    return;
+
   glfwSwapBuffers(windowHandle_);
 }
 
