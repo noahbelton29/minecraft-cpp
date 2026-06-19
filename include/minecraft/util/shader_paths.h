@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "renderer_api.h"
+#include "minecraft/renderer/renderer_api.h"
 
 namespace Minecraft {
   /**

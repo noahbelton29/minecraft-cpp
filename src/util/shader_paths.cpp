@@ -1,4 +1,4 @@
-#include "minecraft/renderer/shader_paths.h"
+#include "minecraft/util/shader_paths.h"
 
 std::string Minecraft::ShaderPaths::getBackendFolder(const RendererAPI api) {
   switch (api) {
@@ -11,11 +11,10 @@ std::string Minecraft::ShaderPaths::getBackendFolder(const RendererAPI api) {
 
 std::string
 Minecraft::ShaderPaths::getVertexShaderPath(const RendererAPI  api,
-                                             const std::string &name) {
+                                            const std::string &name) {
   switch (api) {
     case RendererAPI::OpenGL:
-      return "resources/shaders/" + getBackendFolder(api) + "/" + name +
-             ".vsh";
+      return "resources/shaders/" + getBackendFolder(api) + "/" + name + ".vsh";
     default:
       return "";
   }
@@ -23,11 +22,10 @@ Minecraft::ShaderPaths::getVertexShaderPath(const RendererAPI  api,
 
 std::string
 Minecraft::ShaderPaths::getFragmentShaderPath(const RendererAPI  api,
-                                               const std::string &name) {
+                                              const std::string &name) {
   switch (api) {
     case RendererAPI::OpenGL:
-      return "resources/shaders/" + getBackendFolder(api) + "/" + name +
-             ".fsh";
+      return "resources/shaders/" + getBackendFolder(api) + "/" + name + ".fsh";
     default:
       return "";
   }

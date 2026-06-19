@@ -5,8 +5,8 @@
 #include <iostream>
 
 #include "minecraft/renderer/shader_factory.h"
-#include "minecraft/renderer/shader_paths.h"
 #include "minecraft/util/file_utils.h"
+#include "minecraft/util/shader_paths.h"
 
 bool Minecraft::OpenGLRenderer::init() {
   std::cout << "Initializing OpenGL Renderer\n";
