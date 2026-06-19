@@ -14,5 +14,21 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
-add_executable(minecraft src/main.cpp src/core/window.cpp src/minecraft.cpp)
-target_link_libraries(minecraft PRIVATE glfw)
+find_package(OpenGL REQUIRED)
+
+file(GLOB_RECURSE SOURCES
+        "src/*.cpp"
+        "external/glad/src/*.c"
+)
+
+add_executable(minecraft ${SOURCES})
+
+target_include_directories(minecraft PRIVATE
+        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/external/glad/include
+)
+
+target_link_libraries(minecraft PRIVATE
+        glfw
+        ${OPENGL_LIBRARIES}
+)
