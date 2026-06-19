@@ -12,7 +12,13 @@ FetchContent_Declare(
         GIT_TAG 3.4
         GIT_SHALLOW true
 )
-FetchContent_MakeAvailable(glfw)
+FetchContent_Declare(
+        glm
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 1.0.3
+        GIT_SHALLOW true
+)
+FetchContent_MakeAvailable(glfw glm)
 
 find_package(OpenGL REQUIRED)
 
@@ -30,5 +36,6 @@ target_include_directories(minecraft PRIVATE
 
 target_link_libraries(minecraft PRIVATE
         glfw
+        glm::glm
         ${OPENGL_LIBRARIES}
 )

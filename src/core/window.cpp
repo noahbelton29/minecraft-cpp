@@ -18,6 +18,7 @@ Minecraft::Window::~Window() {
 
 void Minecraft::Window::makeContextCurrent() const {
   glfwMakeContextCurrent(windowHandle_);
+  glfwSwapInterval(1);
 }
 
 bool Minecraft::Window::init() {
@@ -29,12 +30,16 @@ bool Minecraft::Window::init() {
   // Create window
   windowHandle_ =
       glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
-
   if (!windowHandle_) {
     std::cerr << "Failed to create GLFW window\n";
     glfwTerminate();
     return false;
   }
+
+  glfwSetFramebufferSizeCallback(
+      windowHandle_, [](GLFWwindow *, const int width, const int height) {
+        glViewport(0, 0, width, height);
+      });
 
   return true;
 }
