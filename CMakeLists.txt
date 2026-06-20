@@ -18,7 +18,14 @@ FetchContent_Declare(
         GIT_TAG 1.0.3
         GIT_SHALLOW true
 )
-FetchContent_MakeAvailable(glfw glm)
+FetchContent_Declare(
+        stb
+        GIT_REPOSITORY https://github.com/nothings/stb.git
+        GIT_TAG master
+        GIT_SHALLOW true
+)
+
+FetchContent_MakeAvailable(glfw glm stb)
 
 find_package(OpenGL REQUIRED)
 
@@ -32,6 +39,7 @@ add_executable(minecraft ${SOURCES})
 target_include_directories(minecraft PRIVATE
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/external/glad/include
+        ${stb_SOURCE_DIR}
 )
 
 target_link_libraries(minecraft PRIVATE

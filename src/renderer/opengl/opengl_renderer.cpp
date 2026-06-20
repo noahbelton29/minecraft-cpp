@@ -3,13 +3,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "minecraft/renderer/opengl/opengl_index_buffer.h"
-#include "minecraft/renderer/opengl/opengl_vertex_array.h"
-#include "minecraft/renderer/opengl/opengl_vertex_buffer.h"
-#include "minecraft/renderer/shader_factory.h"
-#include "minecraft/util/file_utils.h"
-#include "minecraft/util/shader_paths.h"
-
 bool Minecraft::OpenGLRenderer::init() {
   std::cout << "Initializing OpenGL Renderer\n";
 
@@ -25,69 +18,34 @@ bool Minecraft::OpenGLRenderer::init() {
   glViewport(0, 0, fbWidth, fbHeight);
 
   glEnable(GL_DEPTH_TEST);
-
-  constexpr float vertices[] = {
-      -0.5f,
-      -0.5f,
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      0.5f,
-      -0.5f,
-      0.0f,
-      0.0f,
-      1.0f,
-      0.0f,
-      0.0f,
-      0.5f,
-      0.0f,
-      0.0f,
-      0.0f,
-      1.0f,
-  };
-
-  constexpr uint32_t indices[] = {0, 1, 2};
-
-  const auto vb =
-      std::make_shared<OpenGLVertexBuffer>(vertices, sizeof(vertices));
-  const auto ib = std::make_shared<OpenGLIndexBuffer>(indices, 3);
-
-  vertexArray_ = std::make_unique<OpenGLVertexArray>();
-  vertexArray_->addVertexBuffer(vb,
-                                {
-                                    {ShaderDataType::Float3}, // position
-                                    {ShaderDataType::Float3}, // color
-                                });
-  vertexArray_->setIndexBuffer(ib);
-
-  const std::string vertexSrc = FileUtils::readFileToString(
-      ShaderPaths::getVertexShaderPath(RendererAPI::OpenGL, "triangle"));
-  const std::string fragmentSrc = FileUtils::readFileToString(
-      ShaderPaths::getFragmentShaderPath(RendererAPI::OpenGL, "triangle"));
-
-  shader_ = ShaderFactory::create(RendererAPI::OpenGL, vertexSrc, fragmentSrc);
   return true;
 }
 
 void Minecraft::OpenGLRenderer::shutdown() {
+  commands_.clear();
 }
 
 void Minecraft::OpenGLRenderer::render() {
   setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   clear();
 
-  shader_->bind();
+  const glm::mat4 &vp =
+      camera_ ? camera_->viewProjectionMatrix() : glm::mat4(1.0f);
 
-  if (camera_)
-    shader_->setUniform("uViewProjection", camera_->viewProjectionMatrix());
+  for (const auto &[vertexArray, shader, transform]: commands_) {
+    shader->bind();
+    shader->setUniform("uViewProjection", vp);
+    shader->setUniform("uTransform", transform);
 
-  vertexArray_->bind();
-  glDrawElements(GL_TRIANGLES,
-                 static_cast<GLsizei>(vertexArray_->indexBuffer()->count()),
-                 GL_UNSIGNED_INT,
-                 nullptr);
-  vertexArray_->unbind();
+    vertexArray->bind();
+    glDrawElements(GL_TRIANGLES,
+                   static_cast<GLsizei>(vertexArray->indexBuffer()->count()),
+                   GL_UNSIGNED_INT,
+                   nullptr);
+    vertexArray->unbind();
+  }
+
+  commands_.clear();
 }
 
 void Minecraft::OpenGLRenderer::clear() {
@@ -107,4 +65,11 @@ void Minecraft::OpenGLRenderer::setClearColor(const float red,
 
 void Minecraft::OpenGLRenderer::setCamera(std::shared_ptr<ICamera> camera) {
   camera_ = std::move(camera);
+}
+
+void Minecraft::OpenGLRenderer::submit(
+    std::shared_ptr<IVertexArray> vertexArray,
+    std::shared_ptr<IShader>      shader,
+    const glm::mat4              &transform) {
+  commands_.push_back({std::move(vertexArray), std::move(shader), transform});
 }

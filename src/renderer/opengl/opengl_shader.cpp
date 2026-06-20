@@ -25,12 +25,10 @@ GLuint Minecraft::OpenGLShader::compileShader(const GLenum       type,
 
 Minecraft::OpenGLShader::OpenGLShader(const std::string &vertexSource,
                                       const std::string &fragmentSource) {
-  const GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexSource);
-  const GLuint fragmentShader =
-      compileShader(GL_FRAGMENT_SHADER, fragmentSource);
+  const GLuint vertexShader   = compileShader(GL_VERTEX_SHADER,   vertexSource);
+  const GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 
   program_ = glCreateProgram();
-
   glAttachShader(program_, vertexShader);
   glAttachShader(program_, fragmentShader);
   glLinkProgram(program_);
@@ -69,6 +67,12 @@ void Minecraft::OpenGLShader::setUniform(const std::string &name,
                                          const float        value) {
   if (const GLint loc = glGetUniformLocation(program_, name.c_str()); loc != -1)
     glUniform1f(loc, value);
+}
+
+void Minecraft::OpenGLShader::setUniform(const std::string &name,
+                                         const int          value) {
+  if (const GLint loc = glGetUniformLocation(program_, name.c_str()); loc != -1)
+    glUniform1i(loc, value);
 }
 
 void Minecraft::OpenGLShader::setUniform(const std::string &name,

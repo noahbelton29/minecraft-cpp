@@ -13,7 +13,7 @@ namespace Minecraft {
   public:
     /**
      * @brief Compiles and links a shader from GLSL source code.
-     * @param vertexSource Vertex shader source code.
+     * @param vertexSource   Vertex shader source code.
      * @param fragmentSource Fragment shader source code.
      */
     OpenGLShader(const std::string &vertexSource,
@@ -28,14 +28,21 @@ namespace Minecraft {
 
     /**
      * @brief Sets a float uniform on the shader.
-     * @param name Name of the uniform in the shader code.
+     * @param name  Name of the uniform in the shader code.
      * @param value Value to set.
      */
     void setUniform(const std::string &name, float value) override;
 
     /**
+     * @brief Sets an int uniform on the shader (also used for sampler2D slots).
+     * @param name  Name of the uniform in the shader code.
+     * @param value Value to set.
+     */
+    void setUniform(const std::string &name, int value) override;
+
+    /**
      * @brief Sets a mat4 uniform on the shader.
-     * @param name Name of the uniform in the shader code.
+     * @param name  Name of the uniform in the shader code.
      * @param value Value to set.
      */
     void setUniform(const std::string &name, const glm::mat4 &value) override;
@@ -57,7 +64,7 @@ namespace Minecraft {
 
     /**
      * @brief Compiles a single shader stage from source.
-     * @param type The shader stage type.
+     * @param type   The shader stage type.
      * @param source GLSL source code for the shader.
      * @return The compiled shader ID.
      */

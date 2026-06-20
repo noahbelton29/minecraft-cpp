@@ -18,14 +18,21 @@ namespace Minecraft {
 
     /**
      * @brief Sets a float uniform on the shader.
-     * @param name Name of the uniform in the shader code.
+     * @param name  Name of the uniform in the shader code.
      * @param value Value to set.
      */
     virtual void setUniform(const std::string &name, float value) = 0;
 
     /**
+     * @brief Sets an int uniform on the shader (also used for sampler2D slots).
+     * @param name  Name of the uniform in the shader code.
+     * @param value Value to set.
+     */
+    virtual void setUniform(const std::string &name, int value) = 0;
+
+    /**
      * @brief Sets a mat4 uniform on the shader.
-     * @param name Name of the uniform in the shader code.
+     * @param name  Name of the uniform in the shader code.
      * @param value Value to set.
      */
     virtual void setUniform(const std::string &name,

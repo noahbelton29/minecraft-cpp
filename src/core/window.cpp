@@ -36,12 +36,28 @@ bool Minecraft::Window::init() {
     return false;
   }
 
+  // Let the static GLFW callback reach back into this instance.
+  glfwSetWindowUserPointer(windowHandle_, this);
+
   glfwSetFramebufferSizeCallback(
-      windowHandle_, [](GLFWwindow *, const int width, const int height) {
+      windowHandle_, [](GLFWwindow *handle, const int width, const int height) {
         glViewport(0, 0, width, height);
+
+        auto *self = static_cast<Window *>(glfwGetWindowUserPointer(handle));
+        if (self) {
+          self->width_  = width;
+          self->height_ = height;
+          if (self->resizeCallback_) {
+            self->resizeCallback_(width, height);
+          }
+        }
       });
 
   return true;
+}
+
+void Minecraft::Window::setResizeCallback(ResizeCallback callback) {
+  resizeCallback_ = std::move(callback);
 }
 
 void Minecraft::Window::pollEvents() const {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <string>
@@ -10,6 +11,10 @@ namespace Minecraft {
    */
   class Window {
   public:
+    /// Called whenever the framebuffer size changes, e.g. resize or
+    /// windowed <-> fullscreen toggle. Args are the new width/height in pixels.
+    using ResizeCallback = std::function<void(int, int)>;
+
     /**
      * @brief Creates a window with the given size and title.
      * @param width Window width in pixels.
@@ -25,6 +30,13 @@ namespace Minecraft {
      * @return true if successful, false if something went wrong.
      */
     bool init();
+
+    /**
+     * @brief Registers a callback fired on framebuffer resize (e.g. from
+     * fullscreen toggles), in addition to the internal glViewport update.
+     * @param callback Function taking the new (width, height) in pixels.
+     */
+    void setResizeCallback(ResizeCallback callback);
 
     /**
      * @brief Makes the window's rendering context current on this thread.
@@ -60,6 +72,7 @@ namespace Minecraft {
     int         height_ = 600;
     std::string title_  = "Minecraft";
 
-    GLFWwindow *windowHandle_ = nullptr;
+    GLFWwindow    *windowHandle_   = nullptr;
+    ResizeCallback resizeCallback_ = nullptr;
   };
 } // namespace Minecraft
